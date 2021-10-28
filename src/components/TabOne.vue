@@ -148,11 +148,11 @@ export default {
   width: 375px;
   .search-btn {
     width: 355px;
-    height: 33px;
+    height: 31.5px;
     background-color: #eee;
-    margin: 11px auto 0;
+    margin: 10px auto 0;
     border-radius: 10px;
-    line-height: 33px;
+    line-height: 31.5px;
     text-align: center;
     font-size: 14px;
     color: #a1a1a1;
@@ -167,7 +167,7 @@ export default {
     .tab-item {
       width: 50px;
       height: 70px;
-      padding: 10px 5px;
+      padding: 10px 5px 5px;
       .tab-image {
         width: 100%;
         height: 50px;

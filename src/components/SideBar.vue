@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import tools from '@/utils/tools';
 
 export default {
@@ -26,6 +26,7 @@ export default {
     }),
   },
   methods: {
+    ...mapActions(['getGoodsList']),
     scrollTo(i, e) {
       // 如果在拖拽移动过程中，什么也不做
       // 拖拽过程中，设置为true
@@ -41,6 +42,9 @@ export default {
       const dom = this.$refs.sideBar;
       tools.move(dom.scrollTop, itemHeight / 2 + itemTop - pHeight / 2 - pTop, dom, 'scrollTop');
     },
+  },
+  mounted() {
+    this.getGoodsList({ type: this.sideList[0], page: 1, sort: 'all' });
   },
 };
 </script>
