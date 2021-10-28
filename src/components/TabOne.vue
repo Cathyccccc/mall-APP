@@ -23,6 +23,9 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+import tools from '@/utils/tools';
+
 const menuList = [
   {
     title: '时令水果',
@@ -118,6 +121,7 @@ export default {
     };
   },
   methods: {
+    ...mapActions(['getSideList']),
     scrollTo(i, e) {
       // 如果在拖拽移动过程中，什么也不做
       // 拖拽过程中，设置为true
@@ -129,23 +133,12 @@ export default {
       const itemWidth = e.target.offsetWidth;
       const itemLeft = e.target.getBoundingClientRect().left;
       const pWidth = this.$refs.tabList.offsetWidth;
-      this.move(this.$refs.tabList.scrollLeft, itemWidth / 2 + itemLeft - pWidth / 2);
+      const dom = this.$refs.tabList;
+      tools.move(dom.scrollLeft, itemWidth / 2 + itemLeft - pWidth / 2, dom, 'scrollLeft');
     },
-    move(start, end) {
-      let speed = 5;
-      if (end < 0) {
-        speed *= -1;
-      }
-      let dis = 0;
-      const timer = setInterval(() => {
-        dis += speed;
-        this.$refs.tabList.scrollLeft = start + dis;
-        if (Math.abs(dis) > Math.abs(end)) {
-          this.$refs.tabList.scrollLeft = start + end;
-          clearInterval(timer);
-        }
-      }, 3);
-    },
+  },
+  created() {
+    this.getSideList(this.menuList[this.index]);
   },
 };
 </script>
