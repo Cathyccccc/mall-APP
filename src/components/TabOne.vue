@@ -1,6 +1,6 @@
 <template>
   <div class="tab-one-container">
-    <router-link tag="div" to="/search" class="search-btn">
+    <router-link tag="div" to="/home/search" class="search-btn">
       <van-icon name="search" />
       <div>限时秒杀，最低享1折</div>
     </router-link>
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapMutations, mapActions } from 'vuex';
 import tools from '@/utils/tools';
 
 const menuList = [
@@ -121,6 +121,7 @@ export default {
     };
   },
   methods: {
+    ...mapMutations(['changeShowContent']),
     ...mapActions(['getSideList']),
     scrollTo(i, e) {
       // 如果在拖拽移动过程中，什么也不做
@@ -135,10 +136,11 @@ export default {
       const pWidth = this.$refs.tabList.offsetWidth;
       const dom = this.$refs.tabList;
       tools.move(dom.scrollLeft, itemWidth / 2 + itemLeft - pWidth / 2, dom, 'scrollLeft');
+      this.getSideList(this.menuList[i].title);
     },
   },
   created() {
-    this.getSideList(this.menuList[this.index]);
+    this.getSideList(this.menuList[0].title);
   },
 };
 </script>
@@ -146,6 +148,7 @@ export default {
 <style scoped lang="less">
 .tab-one-container {
   width: 375px;
+  height: 125px;
   .search-btn {
     width: 355px;
     height: 31.5px;

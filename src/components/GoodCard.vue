@@ -2,7 +2,7 @@
   <div class="good-card-container">
     <div class="card">
       <div class="card-img">
-        <img :src="images[0]">
+        <img :src="images[0]" ref="img">
       </div>
       <div class="card-content">
         <div class="title overflow-hidden">{{ title }}</div>
@@ -12,9 +12,13 @@
         </div>
         <div class="price">￥{{ price }}</div>
         <div class="counter">
-          <img src="https://duyi-bucket.oss-cn-beijing.aliyuncs.com/img/rec.png">
-          <div class="num">0</div>
-          <img src="https://duyi-bucket.oss-cn-beijing.aliyuncs.com/img/add.png">
+          <div class="left-counter" @click="changeNum(id, -1)" v-if="num">
+            <img src="https://duyi-bucket.oss-cn-beijing.aliyuncs.com/img/rec.png">
+          </div>
+          <div class="num" v-if="num">{{ num }}</div>
+          <div class="right-counter" @click="changeNum(id, 1)">
+            <img src="https://duyi-bucket.oss-cn-beijing.aliyuncs.com/img/add.png">
+          </div>
         </div>
       </div>
     </div>
@@ -22,8 +26,36 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
+import Animate from '@/utils/animate';
+
 export default {
-  props: ['title', 'desc', 'images', 'price', 'tags'],
+  props: ['title', 'desc', 'images', 'price', 'tags', 'num', 'id'],
+  // data() {
+  //   return {
+  //     num: 0,
+  //   };
+  // },
+  methods: {
+    ...mapMutations(['storageChange']),
+    changeNum(id, i) {
+      this.storageChange({ id, value: i });
+      const { left, top } = this.$refs.img.getBoundingClientRect();
+      const { width: imgWidth, height: imgHeight } = this.$refs.img.getBoundingClientRect();
+      const shopCar = document.getElementById('shop-car');
+      const { left: carLeft, top: carTop } = shopCar.getBoundingClientRect();
+      const { width: carWidth, height: carHeight } = shopCar.getBoundingClientRect();
+      Animate({
+        startX: left,
+        startY: top,
+        endX: carLeft + carWidth / 2 - imgWidth / 2,
+        endY: carTop + carHeight / 2 - imgHeight / 2,
+        imgSrc: this.$refs.img.src,
+        width: imgWidth,
+        height: imgHeight,
+      });
+    },
+  },
 };
 </script>
 
@@ -78,7 +110,7 @@ export default {
       bottom: 10px;
       display: flex;
       justify-content: flex-end;
-      > img {
+      img {
         width: 16px;
         height: 16px;
         padding: 2px 0;

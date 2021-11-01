@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapMutations, mapActions } from 'vuex';
 import tools from '@/utils/tools';
 
 export default {
@@ -26,6 +26,7 @@ export default {
     }),
   },
   methods: {
+    ...mapMutations(['resetGoodsList', 'changeGoodsType']),
     ...mapActions(['getGoodsList']),
     scrollTo(i, e) {
       // 如果在拖拽移动过程中，什么也不做
@@ -41,6 +42,8 @@ export default {
       const pTop = this.$refs.sideBar.getBoundingClientRect().top;
       const dom = this.$refs.sideBar;
       tools.move(dom.scrollTop, itemHeight / 2 + itemTop - pHeight / 2 - pTop, dom, 'scrollTop');
+      this.resetGoodsList();
+      this.getGoodsList({ type: this.sideList[i], page: 1, sort: 'all' });
     },
   },
   mounted() {
