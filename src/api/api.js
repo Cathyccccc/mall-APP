@@ -24,7 +24,11 @@ const likeSearch = (likeValue) => axios.get(URLs.likeSearch, {
 
 const search = (params) => axios.get(URLs.search, { params });
 
-const getGoodsByIds = (value) => axios.get(URLs.getGoodsByIds, { value });
+const getGoodsByIds = (value) => axios.get(URLs.getGoodsByIds, {
+  params: {
+    value,
+  },
+});
 
 export default {
   getSideBar,

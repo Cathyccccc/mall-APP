@@ -30,7 +30,7 @@ import { mapMutations } from 'vuex';
 import Animate from '@/utils/animate';
 
 export default {
-  props: ['title', 'desc', 'images', 'price', 'tags', 'num', 'id'],
+  props: ['title', 'desc', 'images', 'price', 'tags', 'num', 'id', 'nofly'],
   // data() {
   //   return {
   //     num: 0,
@@ -40,6 +40,12 @@ export default {
     ...mapMutations(['storageChange']),
     changeNum(id, i) {
       this.storageChange({ id, value: i });
+      if (i === -1) {
+        return;
+      }
+      if (this.nofly) {
+        return;
+      }
       const { left, top } = this.$refs.img.getBoundingClientRect();
       const { width: imgWidth, height: imgHeight } = this.$refs.img.getBoundingClientRect();
       const shopCar = document.getElementById('shop-car');

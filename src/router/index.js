@@ -14,11 +14,6 @@ const routes = [
     name: 'home',
     children: [
       {
-        path: 'search',
-        component: Search,
-        name: 'search',
-      },
-      {
         path: 'classify',
         component: Classify,
         name: 'classify',
@@ -33,6 +28,11 @@ const routes = [
   {
     path: '*',
     redirect: '/home',
+  },
+  {
+    path: '/search',
+    component: Search,
+    name: 'search',
   },
 ];
 

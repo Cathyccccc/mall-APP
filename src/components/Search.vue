@@ -2,7 +2,7 @@
   <div class="search-container">
     <!-- 搜索框 -->
     <div class="search-head">
-      <van-icon name="arrow-left" class="arrow-left" />
+      <van-icon name="arrow-left" class="arrow-left" @click="$router.goBack()" />
       <van-search
         v-model="value"
         show-action
@@ -23,8 +23,12 @@
         </template>
       </van-search>
     </div>
+    <!-- 搜索历史 -->
+    <div class="search-history" v-if="showLike && likeList.length <= 0">
+      <my-history :searchList="searchList" @search="onSearch"></my-history>
+    </div>
     <!-- 搜索列表 -->
-    <div class="search-list" v-if="showLike">
+    <div class="search-list" v-if="showLike && likeList.length">
       <van-list class="list">
         <van-cell v-for="item in likeList"
           :key="item"
@@ -38,7 +42,7 @@
       </van-list>
     </div>
     <!-- 内容列表 -->
-    <div class="goods-list" v-else>
+    <div class="goods-list" v-else-if="!showLike">
       <van-list
         v-model="loading"
         :finished="finished"
@@ -47,7 +51,7 @@
         :immediate-check="false"
       >
         <good-card v-for="item in goodsList"
-          :key="item.id + Math.random()"
+          :key="item.id"
           :num="counterItem[item.id]"
           v-bind="item"
           class="good-card"
@@ -61,6 +65,7 @@
 import { mapState } from 'vuex';
 import api from '@/api/api';
 import GoodCard from '@/components/GoodCard.vue';
+import MyHistory from '@/components/History.vue';
 
 export default {
   data() {
@@ -68,17 +73,19 @@ export default {
       place: '酒',
       value: this.place,
       likeList: [],
-      size: 5,
+      size: 7,
       goodsList: [],
       loading: false,
       finished: false,
       nowPage: 1,
       showLike: true,
       timer: null,
+      searchList: [],
     };
   },
   components: {
     GoodCard,
+    MyHistory,
   },
   computed: {
     ...mapState({
@@ -93,23 +100,37 @@ export default {
     },
   },
   methods: {
-    onSearch(item) {
-      if (item) {
-        this.value = item;
+    onSearch(value) {
+      console.log(value);
+      if (value) {
+        this.value = value;
       } else {
         this.value = this.place;
+      }
+      const result = this.searchList.find((i) => i.value === this.value);
+      console.log(result);
+      if (result) {
+        result.time = +new Date();
+        this.searchList.sort((a, b) => a.time - b.time > 0);
+      } else {
+        if (this.searchList.length >= 10) {
+          this.searchList.pop();
+        }
+        this.searchList.unshift({ value, time: +new Date() });
+        localStorage.setItem('searchList', JSON.stringify(this.searchList));
       }
       this.goodsList = [];
       this.finished = false;
       this.loading = false;
       this.nowPage = 1;
       this.likeList = [];
-      this.showLike = true;
       this.onLoad();
+      this.showLike = false;
     },
     // input事件--防抖
     async handleInput() {
-      if (this.value === '') {
+      if (this.value === '' || this.value === undefined) {
+        this.likeList = [];
         return;
       }
       if (this.timer) {
@@ -128,6 +149,7 @@ export default {
       this.showLike = true;
       this.likeList = [];
       this.goodsList = [];
+      this.loading = false;
       this.handleInput();
     },
     format(text) {
@@ -140,17 +162,21 @@ export default {
       }
       this.showLike = false;
       this.loading = true;
-      setTimeout(async () => {
+      const timer = setTimeout(async () => {
         const res = await api.search({ type: this.value, page: this.nowPage, size: this.size });
         this.goodsList = [...this.goodsList, ...res.list];
-        this.loading = false;
         if (this.goodsList.length >= res.total) {
           this.finished = true;
+          clearTimeout(timer);
         } else {
+          this.loading = false;
           this.nowPage += 1;
         }
       }, 500);
     },
+  },
+  created() {
+    this.searchList = JSON.parse(localStorage.getItem('searchList')) || [];
   },
 };
 </script>
@@ -159,9 +185,11 @@ export default {
 .search-container {
   width: 100%;
   height: 100vh;
+  background: #fff;
   padding: 0px 10px;
   box-sizing: border-box;
   position: relative;
+  z-index: 10;
   .search-head {
     z-index: 20;
     display: flex;
@@ -180,6 +208,11 @@ export default {
       flex: 1;
     }
   }
+  .search-history {
+    width: 100%;
+    position: absolute;
+    top: 54px;
+  }
   .search-list {
     position: relative;
     top: 54px;
@@ -193,6 +226,8 @@ export default {
     top: 54px;
     padding: 0 20px;
     box-sizing: border-box;
+    width: 100%;
+    background: #fff;
   }
 }
 </style>

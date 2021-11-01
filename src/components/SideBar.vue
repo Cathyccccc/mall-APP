@@ -46,9 +46,9 @@ export default {
       this.getGoodsList({ type: this.sideList[i], page: 1, sort: 'all' });
     },
   },
-  mounted() {
-    this.getGoodsList({ type: this.sideList[0], page: 1, sort: 'all' });
-  },
+  // mounted() {
+  //   this.getGoodsList({ type: this.sideList[0], page: 1, sort: 'all' });
+  // },
 };
 </script>
 
@@ -70,6 +70,7 @@ export default {
   }
   .active {
     color: #ff1a90;
+    font-weight: bold;
     &::before {
       content: '';
       width: 6px;

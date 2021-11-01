@@ -1,6 +1,6 @@
 <template>
   <div class="tab-one-container">
-    <router-link tag="div" to="/home/search" class="search-btn">
+    <router-link tag="div" to="/search" class="search-btn">
       <van-icon name="search" />
       <div>限时秒杀，最低享1折</div>
     </router-link>

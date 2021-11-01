@@ -18,9 +18,11 @@
           :immediate-check="false"
         >
           <good-card v-for="item in goodsList"
-            :key="item.id + Math.random()"
+            :key="item.id"
             :num="counterItem[item.id]"
-            v-bind="item"></good-card>
+            v-bind="item"
+            :nofly="false"
+          ></good-card>
         </van-list>
       </van-pull-refresh>
     </div>
@@ -39,6 +41,7 @@ export default {
       loading: false, // 是否处于加载状态，加载过程中不触发load事件
       finished: false, // 是否已加载完成，加载完成后不再触发load事件
       nowPage: 1,
+      timer: null,
     };
   },
   components: {
@@ -79,13 +82,14 @@ export default {
         return;
       }
       this.loading = true;
-      this.nowPage += 1;
       setTimeout(() => {
         this.getGoodsList({ type: this.goodsType, page: this.nowPage, sort: this.sort });
-        this.loading = false;
       }, 500);
       if (this.goodsList.length >= this.$store.state.total) {
         this.finished = true;
+      } else {
+        this.loading = false;
+        this.nowPage += 1;
       }
     },
   },

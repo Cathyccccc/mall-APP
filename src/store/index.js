@@ -38,7 +38,7 @@ export default new Vuex.Store({
     storageChange(state, payload) {
       const { id, value } = payload;
       if (state.counterItem[id]) {
-        if (value === -1 && state.counterItem[id] === 1) {
+        if ((value === -1 && state.counterItem[id] === 1) || value === -Infinity) {
           Vue.delete(state.counterItem, id);
         } else {
           Vue.set(state.counterItem, id, state.counterItem[id] += value);
@@ -46,7 +46,7 @@ export default new Vuex.Store({
       } else {
         Vue.set(state.counterItem, id, 1);
       }
-      localStorage.setItem('couterItem', JSON.stringify(state.counterItem));
+      localStorage.setItem('counterItem', JSON.stringify(state.counterItem));
     },
   },
   actions: {
